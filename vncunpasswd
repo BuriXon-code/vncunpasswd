@@ -1,0 +1,64 @@
+#!/bin/bash
+# vncunpasswd v1.0.3 (c) 2024 by Sensei
+# Decodes a VNC password from the default $HOME/.vnc/passwd location, from a specified file, or from stdin
+# If you find this script useful, consider supporting my work by making a donation:
+# https://burixon.com.pl/donate/
+#
+# TODO: check if openssl is installed and complain if it is not.
+#
+# Decodes a VNC password from the default location only:
+# cat $HOME/.vnc/passwd | openssl enc -des-cbc --nopad --nosalt -K e84ad660c4721ae0 -iv 0000000000000000 -d -provider legacy -provider default
+
+help() {
+	echo "vncunpasswd v1.0.3 (c) 2024 by Sensei"
+	echo "Decodes a VNC password from the default $HOME/.vnc/passwd location, from a specified file, or from stdin"
+	echo "If you find this script useful, consider supporting my work by making a donation:"
+	echo "https://burixon.com.pl/donate/"
+	echo
+	echo "Usage:"
+	echo "-h | --help  : show this help"
+	echo "-f | --file  : file to read (default $HOME/.vnc/passwd)"
+	echo "-s | --stdin : read from stdin"
+	echo
+	echo "Examples:"
+	echo "vncunpasswd"
+	echo "vncunpasswd -f some-password-file"
+	echo "echo 123456 | vncpasswd -f | vncunpasswd -s"
+}
+
+decode() {
+	openssl enc -des-cbc --nopad --nosalt -K e84ad660c4721ae0 -iv 0000000000000000 -d -provider legacy -provider default
+}
+
+FILE="$HOME/.vnc/passwd"
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-h | --help)
+			help
+			exit;;
+		-f | --file)
+			FILE="$2"
+			shift;;
+		-s | --stdin)
+			FILE="."
+			;;
+		-* | --*)
+			echo >&2 "Unknown argument $1"
+			help >&2
+			exit 1;;
+		*)
+			echo >&2 "Unknown argument $1"
+			help >&2
+			exit 1;;
+	esac
+	shift
+done
+
+if [[ $FILE == "." ]]; then
+	cat | decode
+elif [[ -f $FILE ]]; then
+	cat "$FILE" | decode
+else
+	echo >&2 "VNC password file ($FILE) is missing!"
+	exit 1
+fi
