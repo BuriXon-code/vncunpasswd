@@ -4,8 +4,6 @@
 # If you find this script useful, consider supporting my work by making a donation:
 # https://burixon.com.pl/donate/
 #
-# TODO: check if openssl is installed and complain if it is not.
-#
 # Decodes a VNC password from the default location only:
 # cat $HOME/.vnc/passwd | openssl enc -des-cbc --nopad --nosalt -K e84ad660c4721ae0 -iv 0000000000000000 -d -provider legacy -provider default
 
