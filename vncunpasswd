@@ -1,5 +1,5 @@
 #!/bin/bash
-# vncunpasswd v1.0.3 (c) 2024 by Sensei
+# vncunpasswd v1.0.4 (c) 2024-2025 by Sensei
 # Decodes a VNC password from the default $HOME/.vnc/passwd location, from a specified file, or from stdin
 # If you find this script useful, consider supporting my work by making a donation:
 # https://burixon.com.pl/donate/
@@ -10,7 +10,7 @@
 # cat $HOME/.vnc/passwd | openssl enc -des-cbc --nopad --nosalt -K e84ad660c4721ae0 -iv 0000000000000000 -d -provider legacy -provider default
 
 help() {
-	echo "vncunpasswd v1.0.3 (c) 2024 by Sensei"
+	echo "vncunpasswd v1.0.4 (c) 2024-2025 by Sensei"
 	echo "Decodes a VNC password from the default $HOME/.vnc/passwd location, from a specified file, or from stdin"
 	echo "If you find this script useful, consider supporting my work by making a donation:"
 	echo "https://burixon.com.pl/donate/"
@@ -53,6 +53,12 @@ while [[ $# -gt 0 ]]; do
 	esac
 	shift
 done
+
+if [[ ! -x $(command -v openssl) ]]; then
+        echo >&2 "The required command (openssl) was not found!"
+        echo >&2 -e "Please use:\nsudo apt install openssl\nor equivalent to install it."
+        exit 1
+fi
 
 if [[ $FILE == "." ]]; then
 	cat | decode
